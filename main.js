@@ -14,6 +14,8 @@ let bullets = [];
 let frameRate = 1;
 let renderId = setInterval(render, frameRate);
 let enemies = [];
+let healthBar = document.querySelector('#health');
+let health = 4;
 
 function render() {
   resetCanvas();
@@ -25,10 +27,19 @@ function render() {
 }
 
 function checkEnemyPlayerCollision() {
-  enemies.forEach(enemy => {
+  enemies.forEach((enemy, enemyIndex) => {
     if (checkCollision(enemy, player)) {
-      pause();
-      alert('You Lost the Homefront');
+      enemies = enemies.filter(e => e !== enemies[enemyIndex]);
+
+      healthBar.innerText = healthBar.innerText.slice(0, -2);
+      health -= 1;
+      if (health <= 0) {
+        pause();
+        canvas.style.backgroundColor = 'red';
+        setTimeout(function() {
+          alert('You Lost the Home Front');
+        }, 1000);
+      }
     }
   });
 }
@@ -38,6 +49,7 @@ function checkBulletEnemyCollision() {
     bullets.forEach((bullet, bulletIndex) => {
       if (checkCollision(enemy, bullet)) {
         enemies = enemies.filter(e => e !== enemies[enemyIndex]);
+        bullets = bullets.filter(e => e !== bullets[bulletIndex]);
         killCounter.innerText = ++killCount;
       }
     });
