@@ -18,7 +18,7 @@ let healthBar = document.querySelector('#health');
 let health = 4;
 let highScoreList = document.querySelector('#high-scores');
 const storage = JSON.parse(localStorage.getItem('highScores'));
-let highScores = storage || [{ initials: 'RKW', score: 2 }];
+let highScores = storage || [];
 
 function printHighScores() {
   highScoreList.innerHTML = '';
@@ -116,7 +116,7 @@ function setEnemyMovement() {
 
 setInterval(function() {
   enemies.push(new Enemy(getRandomXcoordinate()));
-}, 500);
+}, 100);
 
 function getRandomXcoordinate() {
   return Math.round(Math.random() * canvas.width);
@@ -187,11 +187,10 @@ document.addEventListener('keydown', key => {
     case 68: //right
       if (player.x < canvas.width - player.width) player.x += 10;
       break;
+    case 32:
+      shoot();
+      break;
   }
-});
-
-document.addEventListener('keyup', key => {
-  if (key.which === 32) shoot();
 });
 
 pauseButton.addEventListener('click', pause);
