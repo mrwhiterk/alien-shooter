@@ -19,6 +19,7 @@ function render() {
   setBulletMovement();
   setEnemyMovement();
   checkEnemyPlayerCollision();
+  checkBulletEnemyCollision();
 }
 
 function checkEnemyPlayerCollision() {
@@ -27,6 +28,16 @@ function checkEnemyPlayerCollision() {
       pause();
       alert('You Lost the Homefront');
     }
+  });
+}
+
+function checkBulletEnemyCollision() {
+  enemies.forEach((enemy, enemyIndex) => {
+    bullets.forEach((bullet, bulletIndex) => {
+      if (checkCollision(enemy, bullet)) {
+        enemies = enemies.filter(e => e !== enemies[enemyIndex]);
+      }
+    });
   });
 }
 
@@ -67,10 +78,10 @@ function setEnemyMovement() {
 
 setInterval(function() {
   enemies.push(new Enemy(getRandomXcoordinate()));
-}, 2000);
+}, 500);
 
 function getRandomXcoordinate() {
-  return Math.round(Math.random() * canvas.width - player.width);
+  return Math.round(Math.random() * canvas.width);
 }
 
 function setBulletMovement() {
