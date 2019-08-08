@@ -16,6 +16,24 @@ let renderId = setInterval(render, frameRate);
 let enemies = [];
 let healthBar = document.querySelector('#health');
 let health = 4;
+let highScoreList = document.querySelector('#high-scores');
+const storage = JSON.parse(localStorage.getItem('highScores'));
+let highScores = storage || [{ initials: 'RKW', score: 2 }];
+
+function printHighScores() {
+  highScoreList.innerHTML = '';
+  highScores = highScores.sort((a, b) => (a.score < b.score ? 1 : -1));
+  // list.sort((a, b) => (a.color > b.color) ? 1 : -1)
+  highScores.forEach(item => {
+    let li = document.createElement('li');
+    li.innerHTML = `<div id="score-entry"><p>${
+      item.initials
+    }</p> <p id="score-entry-points">${item.score}</p></div>`;
+    highScoreList.appendChild(li);
+  });
+}
+
+printHighScores();
 
 function render() {
   resetCanvas();
@@ -38,6 +56,11 @@ function checkEnemyPlayerCollision() {
         canvas.style.backgroundColor = 'red';
         setTimeout(function() {
           alert('You Lost the Home Front');
+
+          let initials = prompt('Enter your initials:');
+          highScores.push({ initials, score: killCount });
+          printHighScores();
+          localStorage.setItem('highScores', JSON.stringify(highScores));
         }, 1000);
       }
     }
