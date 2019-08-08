@@ -2,6 +2,8 @@ let canvas = document.querySelector('canvas');
 let ctx = canvas.getContext('2d');
 let pauseButton = document.querySelector('#pause');
 let playerSize = 20;
+let killCounter = document.querySelector('#kill-count');
+let killCount = 0;
 let player = {
   y: canvas.height - playerSize,
   x: 0,
@@ -36,6 +38,7 @@ function checkBulletEnemyCollision() {
     bullets.forEach((bullet, bulletIndex) => {
       if (checkCollision(enemy, bullet)) {
         enemies = enemies.filter(e => e !== enemies[enemyIndex]);
+        killCounter.innerText = ++killCount;
       }
     });
   });

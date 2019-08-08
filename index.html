@@ -12,13 +12,21 @@
 
     <title>Document</title>
   </head>
-  <body class="text-center">
+  <body class="container text-center">
     <header>
       <h1>Defend the HomeFront</h1>
     </header>
-    <canvas height="500px" width="500px"></canvas>
+    <div class="row">
+      <div class="col-md-8">
+        <canvas height="500px" width="500px"></canvas>
+      </div>
+      <div class="col-md-4">
+        <p>Kill Count: <span id="kill-count">0</span></p>
+      </div>
+    </div>
     <br />
     <button id="pause" class="btn btn-primary btn-lg">pause</button>
+
     <script src="main.js"></script>
   </body>
 </html>
