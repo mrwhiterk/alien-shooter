@@ -17,7 +17,42 @@ function render() {
   resetCanvas();
   renderPlayer();
   setBulletMovement();
+  setEnemyMovement();
+  checkEnemyPlayerCollision();
+}
 
+function checkEnemyPlayerCollision() {
+  enemies.forEach(enemy => {
+    if (checkCollision(enemy, player)) {
+      pause();
+      alert('You Lost the Homefront');
+    }
+  });
+}
+
+function checkCollision(item1, item2) {
+  let item1LeftSide = item1.x;
+  let item1RightSide = item1.x + item1.width;
+  let item1Bottom = item1.y + item1.height;
+  let item1Top = item1.y;
+
+  let item2LeftSide = item2.x;
+  let item2RightSide = item2.x + item2.width;
+  let item2Bottom = item2.y + item2.height;
+  let item2Top = item2.y;
+
+  if (
+    item1RightSide > item2LeftSide &&
+    item1LeftSide < item2RightSide &&
+    item1Bottom > item2Top &&
+    item1Top < item2Bottom
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function setEnemyMovement() {
   enemies.forEach((enemy, i) => {
     if (enemies[i]) {
       enemy.render();
@@ -32,7 +67,7 @@ function render() {
 
 setInterval(function() {
   enemies.push(new Enemy(getRandomXcoordinate()));
-}, 500);
+}, 2000);
 
 function getRandomXcoordinate() {
   return Math.round(Math.random() * canvas.width - player.width);
@@ -110,6 +145,8 @@ document.addEventListener('keyup', key => {
   if (key.which === 32) shoot();
 });
 
-pauseButton.addEventListener('click', () => {
+pauseButton.addEventListener('click', pause);
+
+function pause() {
   clearInterval(renderId);
-});
+}
