@@ -17,7 +17,7 @@ let player = {
   }
 };
 let bullets = [];
-let frameRate = 10;
+let frameRate = 1;
 let renderId = setInterval(render, frameRate);
 let enemies = [];
 let healthBar = document.querySelector('#health');
