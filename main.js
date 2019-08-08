@@ -8,10 +8,16 @@ let player = {
   y: canvas.height - playerSize,
   x: 0,
   height: playerSize,
-  width: playerSize
+  width: playerSize,
+  speedX: 0,
+  speedY: 0,
+  newPos: function() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
 };
 let bullets = [];
-let frameRate = 1;
+let frameRate = 10;
 let renderId = setInterval(render, frameRate);
 let enemies = [];
 let healthBar = document.querySelector('#health');
@@ -19,11 +25,11 @@ let health = 4;
 let highScoreList = document.querySelector('#high-scores');
 const storage = JSON.parse(localStorage.getItem('highScores'));
 let highScores = storage || [];
+let myGameArea = {};
 
 function printHighScores() {
   highScoreList.innerHTML = '';
   highScores = highScores.sort((a, b) => (a.score < b.score ? 1 : -1));
-  // list.sort((a, b) => (a.color > b.color) ? 1 : -1)
   highScores.forEach(item => {
     let li = document.createElement('li');
     li.innerHTML = `<div id="score-entry"><p>${
@@ -37,6 +43,8 @@ printHighScores();
 
 function render() {
   resetCanvas();
+  setController();
+  player.newPos();
   renderPlayer();
   setBulletMovement();
   setEnemyMovement();
@@ -56,7 +64,6 @@ function checkEnemyPlayerCollision() {
         canvas.style.backgroundColor = 'red';
         setTimeout(function() {
           alert('You Lost the Home Front');
-
           let initials = prompt('Enter your initials:');
           highScores.push({ initials, score: killCount });
           printHighScores();
@@ -116,10 +123,14 @@ function setEnemyMovement() {
 
 setInterval(function() {
   enemies.push(new Enemy(getRandomXcoordinate()));
-}, 100);
+}, 1000);
 
 function getRandomXcoordinate() {
   return Math.round(Math.random() * canvas.width);
+}
+
+function getRandInt(min, max) {
+  return Math.floor(Math.random() * max - min) + min;
 }
 
 function setBulletMovement() {
@@ -173,28 +184,42 @@ function resetCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-document.addEventListener('keydown', key => {
-  switch (key.which) {
-    case 37: //left
-      if (player.x > 0) player.x -= 10;
-      break;
-    case 65: //left
-      if (player.x > 0) player.x -= 10;
-      break;
-    case 39: //right
-      if (player.x < canvas.width - player.width) player.x += 10;
-      break;
-    case 68: //right
-      if (player.x < canvas.width - player.width) player.x += 10;
-      break;
-    case 32:
-      shoot();
-      break;
-  }
+window.addEventListener('keydown', function(e) {
+  myGameArea.keys = myGameArea.keys || [];
+  myGameArea.keys[e.keyCode] = true;
+});
+
+window.addEventListener('keyup', function(e) {
+  myGameArea.keys[e.keyCode] = false;
 });
 
 pauseButton.addEventListener('click', pause);
 
 function pause() {
   clearInterval(renderId);
+}
+
+function setController() {
+  player.speedX = 0;
+  player.speedY = 0;
+  if (myGameArea.keys && myGameArea.keys[37]) {
+    player.speedX = -1;
+  }
+  if (myGameArea.keys && myGameArea.keys[39]) {
+    player.speedX = 1;
+  }
+  if (myGameArea.keys && myGameArea.keys[38]) {
+    player.speedY = -1;
+  }
+  if (myGameArea.keys && myGameArea.keys[40]) {
+    player.speedY = 1;
+  }
+  if (
+    (myGameArea.keys && myGameArea.keys[20]) ||
+    (myGameArea.keys && myGameArea.keys[32])
+  ) {
+    shoot();
+    myGameArea.keys[20] = false;
+    myGameArea.keys[32] = false;
+  }
 }
