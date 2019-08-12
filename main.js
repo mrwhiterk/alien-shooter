@@ -33,7 +33,7 @@ function printHighScores() {
   highScores.forEach(item => {
     let li = document.createElement('li');
     li.innerHTML = `<div id="score-entry"><p>${
-      item.initials
+      item.username
     }</p> <p id="score-entry-points">${item.score}</p></div>`;
     highScoreList.appendChild(li);
   });
@@ -64,10 +64,14 @@ function checkEnemyPlayerCollision() {
         canvas.style.backgroundColor = 'red';
         setTimeout(function() {
           alert('You Lost the Home Front');
-          let initials = prompt('Enter your initials:');
-          highScores.push({ initials, score: killCount });
-          printHighScores();
-          localStorage.setItem('highScores', JSON.stringify(highScores));
+          let username = prompt(
+            'Enter your initials: (If you want to post score)'
+          );
+          if (username) {
+            highScores.push({ username, score: killCount });
+            printHighScores();
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+          }
         }, 1000);
       }
     }
@@ -112,7 +116,8 @@ function setEnemyMovement() {
   enemies.forEach((enemy, i) => {
     if (enemies[i]) {
       enemy.render();
-      enemies[i].y += 1;
+      enemies[i].y += enemies[i].speed;
+      enemies[i].x += enemies[i].direction;
 
       if (enemies[i].y > canvas.height) {
         enemies = enemies.filter(x => x !== enemies[i]);
@@ -123,7 +128,7 @@ function setEnemyMovement() {
 
 setInterval(function() {
   enemies.push(new Enemy(getRandomXcoordinate()));
-}, 1000);
+}, 300);
 
 function getRandomXcoordinate() {
   return Math.round(Math.random() * canvas.width);
@@ -174,6 +179,8 @@ function Enemy(x) {
   this.y = 0;
   this.width = 20;
   this.height = 20;
+  this.speed = 1 + Math.random();
+  this.direction = player.x <= 250 ? -0.2 : 0.2;
   this.render = function() {
     ctx.fillStyle = 'red';
     ctx.fillRect(this.x, this.y, this.width, this.height);
